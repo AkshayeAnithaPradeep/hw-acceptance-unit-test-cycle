@@ -1,0 +1,5 @@
+%h1= "Movies with Director " +  @current_movie.director
+- @movies.each do |movie|
+    %li= movie.title
+%br    
+= link_to "Back to #{@current_movie.title}", movie_path(@current_movie)

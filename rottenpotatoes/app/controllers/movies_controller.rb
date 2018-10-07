@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
   
   def movie_params
-    params.require(:movie).permit(:title, :rating, :description, :release_date)
+    params.require(:movie).permit(:title, :rating, :description, :release_date, :director)
   end
 
   def show
@@ -25,12 +25,12 @@ class MoviesController < ApplicationController
       @selected_ratings = Hash[@all_ratings.map {|rating| [rating, rating]}]
     end
     
+    @movies = Movie.where(rating: @selected_ratings.keys).order(ordering)
     if params[:sort] != session[:sort] or params[:ratings] != session[:ratings]
       session[:sort] = sort
       session[:ratings] = @selected_ratings
       redirect_to :sort => sort, :ratings => @selected_ratings and return
     end
-    @movies = Movie.where(rating: @selected_ratings.keys).order(ordering)
   end
 
   def new
@@ -59,6 +59,16 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+  def search_directors
+    @current_movie = Movie.find(params[:id])
+    if @current_movie.director == nil or @current_movie.director == ""
+      flash[:notice] = "'#{@current_movie.title}' has no director info"
+      redirect_to movies_path
+    else
+      @movies = Movie.find_with_same_director(params[:id])
+    end
   end
 
 end

@@ -46,6 +46,7 @@ test: &test
 production:
   adapter: postgresql
   database: hw3_production
+  pool: 5
   username: myapp
   password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
 
